@@ -2,7 +2,7 @@
 FC = gfortran
 
 # Compiler flags
-FCFLAGS = -ffree-line-length-none -Wall -Wextra -Wconversion -pedantic -fcheck=bounds -fcheck=all -O2
+FCFLAGS = -Wall -Wextra -Wconversion -pedantic -fcheck=bounds -fcheck=all -O2
 
 # Source files
 SRCS = example.f90 sandwich_solution.f90 kind_parameter.f90
