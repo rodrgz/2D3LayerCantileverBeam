@@ -1,10 +1,30 @@
+# Copyright (c) 2024 Erik da Rosa Rodriguez
+#
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
+#
+# In order to give credit to the creators, we simply ask you to cite
+# the reference below in any publication in which you have made use
+# of any part of the code.
+#
+# @article{DaRosaRodriguez_Rossi_2024,
+#   doi = {##},
+#   url = {https://doi.org/##/##},
+#   year = {2024},
+#   publisher = {##},
+#   volume = {##},
+#   number = {##},
+#   pages = {##},
+#   author = {Erik da Rosa Rodriguez and Rodrigo Rossi},
+#   title = {2D Analytical Solution and XFEM Verification of a
+#   Three-Layer Sandwich Beam Under Various Loads},
+#   journal = {To appear in Composite Structures}
+# }
 
 module SandwichSolution
 
-export compute_C, u₁, u₂, σ₁₁, σ₂₂, σ₁₂
+export computeC, u₁, u₂, σ₁₁, σ₂₂, σ₁₂
 
 u₁(C, x, y, i, E, nu) =
     (
@@ -78,11 +98,11 @@ u₂(C, x, y, i, E, nu) =
     3 * C[i, 1] * y^4 +
     4 * C[i, 2] * y^3 - 3 * C[i, 9] * y^2 - 2 * C[i, 10] * y - C[i, 11]
 
-function compute_C(E, nu, l, h, Q, M, q)
+function computeC(E, nu, l, h, Q, M, q)
 
-    compute_C = zeros(3, 19)
+    C = zeros(Float64, 3, 19)
 
-    compute_C[1, 1] =
+    C[1, 1] =
         -E[1] * q[2] * (E[1] * h[1] + E[2] * h[2] + E[3] * h[3]) / (
             3 * E[1]^2 * h[1]^4 +
             12 *
@@ -105,7 +125,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[1, 2] =
+    C[1, 2] =
         -(E[1] * h[1]^2 + (-2 * h[2] * h[3] - h[3]^2) * E[3] - E[2] * h[2]^2) *
         E[1] *
         q[2] / (
@@ -130,7 +150,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[1, 3] =
+    C[1, 3] =
         E[1] *
         h[1] *
         (h[3] * (h[1] + 2 * h[2] + h[3]) * E[3] + E[2] * h[2] * (h[1] + h[2])) *
@@ -153,7 +173,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[1, 4] =
+    C[1, 4] =
         -3 *
         (
             E[3]^2 * h[3]^4 / 3 +
@@ -189,7 +209,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[1, 5] =
+    C[1, 5] =
         -E[1] * q[1] * (E[1] * h[1] + E[2] * h[2] + E[3] * h[3]) / (
             E[1]^2 * h[1]^4 +
             4 *
@@ -212,7 +232,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[1, 6] =
+    C[1, 6] =
         -3 *
         (E[1] * h[1]^2 + (-2 * h[2] * h[3] - h[3]^2) * E[3] - E[2] * h[2]^2) *
         E[1] *
@@ -238,7 +258,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[1, 7] =
+    C[1, 7] =
         3 *
         E[1] *
         h[1] *
@@ -262,7 +282,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[1, 8] =
+    C[1, 8] =
         -3 *
         (
             E[3]^2 * h[3]^4 / 3 +
@@ -298,7 +318,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[1, 9] =
+    C[1, 9] =
         2 *
         E[1] *
         (
@@ -542,7 +562,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2
 
 
-    compute_C[1, 10] =
+    C[1, 10] =
         (
             30 * h[1]^6 * E[2] * (q[2] * h[1]^2 / 30 + Q) * E[1]^4 +
             120 *
@@ -823,7 +843,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2 / 10
 
 
-    compute_C[1, 11] =
+    C[1, 11] =
         -6 *
         h[1] *
         (
@@ -1090,7 +1110,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2
 
 
-    compute_C[1, 13] =
+    C[1, 13] =
         2 *
         E[1] *
         (
@@ -1334,7 +1354,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2
 
 
-    compute_C[1, 14] =
+    C[1, 14] =
         (
             30 * h[1]^6 * E[2] * (q[1] * h[1]^2 / 30 + M) * E[1]^4 +
             120 *
@@ -1615,7 +1635,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2 / 10
 
 
-    compute_C[1, 17] =
+    C[1, 17] =
         (
             5 * q[2] * E[2]^4 * h[2]^9 +
             10 *
@@ -2708,7 +2728,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2 / 10
 
 
-    compute_C[1, 18] =
+    C[1, 18] =
         (
             5 * E[2]^4 * h[2]^9 * q[1] +
             10 *
@@ -3857,7 +3877,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2 / 10
 
 
-    compute_C[1, 19] =
+    C[1, 19] =
         (
             120 *
             h[2]^6 *
@@ -5118,7 +5138,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2 / 20
 
 
-    compute_C[2, 1] =
+    C[2, 1] =
         -q[2] * (E[1] * h[1] + E[2] * h[2] + E[3] * h[3]) * E[2] / (
             3 * E[1]^2 * h[1]^4 +
             12 *
@@ -5141,7 +5161,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[2, 2] =
+    C[2, 2] =
         -(E[1] * h[1]^2 + (-2 * h[2] * h[3] - h[3]^2) * E[3] - E[2] * h[2]^2) *
         E[2] *
         q[2] / (
@@ -5163,7 +5183,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[2, 3] =
+    C[2, 3] =
         E[1] *
         h[1] *
         (h[3] * (h[1] + 2 * h[2] + h[3]) * E[3] + E[2] * h[2] * (h[1] + h[2])) *
@@ -5186,7 +5206,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[2, 4] =
+    C[2, 4] =
         -3 *
         (
             E[3]^2 * h[3]^4 / 3 +
@@ -5222,7 +5242,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[2, 5] =
+    C[2, 5] =
         -q[1] * (E[1] * h[1] + E[2] * h[2] + E[3] * h[3]) * E[2] / (
             E[1]^2 * h[1]^4 +
             4 *
@@ -5245,7 +5265,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[2, 6] =
+    C[2, 6] =
         -3 *
         (E[1] * h[1]^2 + (-2 * h[2] * h[3] - h[3]^2) * E[3] - E[2] * h[2]^2) *
         E[2] *
@@ -5268,7 +5288,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[2, 7] =
+    C[2, 7] =
         3 *
         E[1] *
         h[1] *
@@ -5292,7 +5312,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[2, 8] =
+    C[2, 8] =
         -3 *
         (
             E[3]^2 * h[3]^4 / 3 +
@@ -5328,7 +5348,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[2, 9] =
+    C[2, 9] =
         (
             2 * E[1]^3 * E[2] * h[1]^7 * q[2] -
             5 *
@@ -5613,7 +5633,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2 / 5
 
 
-    compute_C[2, 10] =
+    C[2, 10] =
         (
             -5 * nu[2] * E[3]^4 * h[3]^8 * q[2] -
             60 *
@@ -5982,7 +6002,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2 / 10
 
 
-    compute_C[2, 11] =
+    C[2, 11] =
         -6 *
         h[1] *
         (
@@ -6249,7 +6269,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2
 
 
-    compute_C[2, 13] =
+    C[2, 13] =
         (
             2 * E[1]^3 * E[2] * h[1]^7 * q[1] -
             5 *
@@ -6534,7 +6554,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2 / 5
 
 
-    compute_C[2, 14] =
+    C[2, 14] =
         (
             -5 * E[3]^4 * h[3]^8 * nu[2] * q[1] -
             60 *
@@ -6903,7 +6923,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2 / 10
 
 
-    compute_C[2, 17] =
+    C[2, 17] =
         (
             5 * q[2] * E[2]^4 * h[2]^9 +
             10 *
@@ -7996,7 +8016,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2 / 10
 
 
-    compute_C[2, 18] =
+    C[2, 18] =
         (
             5 * E[2]^4 * h[2]^9 * q[1] +
             10 *
@@ -9145,7 +9165,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2 / 10
 
 
-    compute_C[2, 19] =
+    C[2, 19] =
         (
             120 *
             h[2]^6 *
@@ -10406,7 +10426,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2 / 20
 
 
-    compute_C[3, 1] =
+    C[3, 1] =
         -E[3] * q[2] * (E[1] * h[1] + E[2] * h[2] + E[3] * h[3]) / (
             3 * E[3]^2 * h[3]^4 +
             12 *
@@ -10429,7 +10449,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[3, 2] =
+    C[3, 2] =
         -(E[1] * h[1]^2 + (-2 * h[2] * h[3] - h[3]^2) * E[3] - E[2] * h[2]^2) *
         E[3] *
         q[2] / (
@@ -10451,7 +10471,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[3, 3] =
+    C[3, 3] =
         (((E[2] - E[3]) * h[3] + E[1] * h[1]) * h[2] + E[1] * h[1] * (h[1] + h[3])) *
         E[3] *
         (h[2] + h[3]) *
@@ -10477,7 +10497,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[3, 4] =
+    C[3, 4] =
         -3 *
         E[3] *
         (h[2] + h[3])^2 *
@@ -10510,7 +10530,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[3, 5] =
+    C[3, 5] =
         -E[3] * q[1] * (E[1] * h[1] + E[2] * h[2] + E[3] * h[3]) / (
             E[3]^2 * h[3]^4 +
             4 *
@@ -10533,7 +10553,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[3, 6] =
+    C[3, 6] =
         -3 *
         (E[1] * h[1]^2 + (-2 * h[2] * h[3] - h[3]^2) * E[3] - E[2] * h[2]^2) *
         E[3] *
@@ -10556,7 +10576,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[3, 7] =
+    C[3, 7] =
         3 *
         (((E[2] - E[3]) * h[3] + E[1] * h[1]) * h[2] + E[1] * h[1] * (h[1] + h[3])) *
         E[3] *
@@ -10583,7 +10603,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[3, 8] =
+    C[3, 8] =
         -3 *
         E[3] *
         (h[2] + h[3])^2 *
@@ -10616,7 +10636,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )
 
 
-    compute_C[3, 9] =
+    C[3, 9] =
         2 *
         (
             (
@@ -11004,7 +11024,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2
 
 
-    compute_C[3, 10] =
+    C[3, 10] =
         3 *
         (
             -h[2]^5 *
@@ -11514,7 +11534,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2
 
 
-    compute_C[3, 11] =
+    C[3, 11] =
         -6 *
         (
             h[2]^5 *
@@ -12051,7 +12071,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2
 
 
-    compute_C[3, 13] =
+    C[3, 13] =
         2 *
         (
             (
@@ -12439,7 +12459,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2
 
 
-    compute_C[3, 14] =
+    C[3, 14] =
         3 *
         (
             -(
@@ -12949,7 +12969,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2
 
 
-    compute_C[3, 17] =
+    C[3, 17] =
         (
             120 *
             h[2]^5 *
@@ -14079,7 +14099,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2 / E[2] / 10
 
 
-    compute_C[3, 18] =
+    C[3, 18] =
         (
             -60 *
             h[2]^5 *
@@ -15246,7 +15266,7 @@ function compute_C(E, nu, l, h, Q, M, q)
         )^2 / E[2] / 10
 
 
-    compute_C[3, 19] =
+    C[3, 19] =
         (
             3 * q[2] * E[2]^4 * h[2]^10 +
             20 *
@@ -17054,7 +17074,7 @@ function compute_C(E, nu, l, h, Q, M, q)
             E[3]^2 * h[3]^4
         )^2 / E[2] / 20
 
-    return compute_C
+    return C
 
 end
 
