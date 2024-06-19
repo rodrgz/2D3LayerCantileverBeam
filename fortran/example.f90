@@ -1,33 +1,42 @@
 program example
 
    use sandwich_solution
-   use kind_parameter
 
    implicit none
 
-   real(dp), dimension(3) :: E = [1.0d+00, 2.0d+00, 3.0d+00]
-   real(dp), dimension(2) :: q = [1.0d+00, 2.0d+00]
-   real(dp) :: QQ = 3.0d+00
-   real(dp) :: M = 2.0d+00
-   real(dp), dimension(3) :: h = [1.0d+00, 2.0d+00, 3.0d+00]
-   real(dp), dimension(3) :: nu = [0.3d+00, 0.3d+00, 0.2d+00]
-   real(dp) :: l = 5.0d+00
-   real(dp), dimension(3, 19) :: C
-   real(dp) :: x, y
+   integer, parameter :: dp = kind(0.0d0)
    integer :: i
+   real(dp), dimension(3) :: E = [500.0d0, 100.0d0, 500.0d0]
+   real(dp), dimension(2) :: p = [3.0d0, 2.0d0/5.0d0]
+   real(dp) :: Q = -1.0d-2
+   real(dp) :: M = -5.0d-2
+   real(dp), dimension(3) :: h = [0.25d0, 0.5d0, 0.25d0]
+   real(dp), dimension(3) :: nu = [0.3d0, 0.25d0, 0.3d0]
+   real(dp) :: l = 5.0d0
+   real(dp), dimension(3, 19) :: C = 0.0d0
+   real(dp) :: x, y
 
-   ! Example values for x, y, and i
-   x = 1.0d+00
-   y = 1.0d+00
-   i = 1
+   ! Example values for x, y
+   x = l/2.0d0
+   y = h(2)/2.0d0
 
-   ! Initialize or compute the C matrix here
-   C = compute_C(E, nu, l, h, QQ, M, q)
+   if (y < 0.0d0) then
+      i = 1
+   elseif (y > h(2)) then
+      i = 3
+   else
+      i = 2
+   end if
 
-   print *, "u_{x} = ", u1(C, x, y, i, E, nu)
-   print *, "u_{y} = ", u2(C, x, y, i, E, nu)
-   print *, "Stress_{xx} = ", stress11(C, x, y, i)
-   print *, "Stress_{yy} = ", stress22(C, x, y, i)
-   print *, "Stress_{xy} = ", stress12(C, x, y, i)
+   ! Compute the C matrix
+   C = computeC(E, nu, l, h, Q, M, p)
+
+   print *, "(x, y) = ", "(", x, ",", y, ")"
+   print *, "layer = ", i
+   print *, "u_{1} = ", u1(C, x, y, i, E, nu)
+   print *, "u_{2} = ", u2(C, x, y, i, E, nu)
+   print *, "Stress_{11} = ", stress11(C, x, y, i)
+   print *, "Stress_{22} = ", stress22(C, x, y, i)
+   print *, "Stress_{12} = ", stress12(C, x, y, i)
 
 end program example
