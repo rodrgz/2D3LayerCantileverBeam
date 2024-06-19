@@ -4,10 +4,11 @@
 
 module sandwich_solution
 
-   use kind_parameter
-
    implicit none
 
+   private
+   integer, parameter :: dp = kind(0.0d0)
+   public u1, u2, stress11, stress22, stress12, computeC
 !                                                   ...  ___
 !                                            .......  |   |
 !                                     .......   |  |  |   |
