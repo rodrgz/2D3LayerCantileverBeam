@@ -24,7 +24,7 @@ $(EXEC): $(OBJS)
 example.o: example.f90 sandwich_solution.mod
 	$(FC) $(FCFLAGS) -c example.f90
 
-# Compile the sandwich_solution module, with dependency on the kind_parameter module
+# Compile the sandwich_solution module
 sandwich_solution.o: sandwich_solution.f90
 	$(FC) $(FCFLAGS) -c sandwich_solution.f90
 
