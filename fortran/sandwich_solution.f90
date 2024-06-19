@@ -1,6 +1,26 @@
+! Copyright (c) 2024 Erik da Rosa Rodriguez
+!
 ! This Source Code Form is subject to the terms of the Mozilla Public
 ! License, v. 2.0. If a copy of the MPL was not distributed with this
 ! file, You can obtain one at https://mozilla.org/MPL/2.0/.
+!
+! In order to give credit to the creators, we simply ask you to cite
+! the reference below in any publication in which you have made use
+! of any part of the code.
+!
+! @article{DaRosaRodriguez_Rossi_2024,
+!   doi = {##},
+!   url = {https://doi.org/##/##},
+!   year = {2024},
+!   publisher = {##},
+!   volume = {##},
+!   number = {##},
+!   pages = {##},
+!   author = {Erik da Rosa Rodriguez and Rodrigo Rossi},
+!   title = {2D Analytical Solution and XFEM Verification of a
+!   Three-Layer Sandwich Beam Under Various Loads},
+!   journal = {To appear in Composite Structures}
+! }
 
 module sandwich_solution
 
@@ -8,7 +28,9 @@ module sandwich_solution
 
    private
    integer, parameter :: dp = kind(0.0d0)
+
    public u1, u2, stress11, stress22, stress12, computeC
+
 !                                                   ...  ___
 !                                            .......  |   |
 !                                     .......   |  |  |   |
@@ -128,13 +150,13 @@ contains
          0.4d1*C(i, 2)*y**3 - 0.3d1*C(i, 9)*y**2 - 0.2d1*C(i, 10)*y - 0.1d1*C(i, 11)
    end function stress12
 
-   pure function compute_C(E, nu, l, h, QQ, M, q)
+   pure function computeC(E, nu, l, h, QQ, M, q) result(C)
       real(dp), intent(in) :: E(3), nu(3), h(3), q(2), l, QQ, M
-      real(dp) :: compute_C(3, 19)
+      real(dp) :: C(3, 19)
 
-      compute_C(:, :) = 0.0d0
+      C(:, :) = 0.0d0
 
-      compute_C(1, 1) = &
+      C(1, 1) = &
          -0.1d1*E(1)*q(2)*(E(1)*h(1) + E(2)*h(2) + E(3)*h(3))/( &
          0.3d1*E(1)**2*h(1)**4 + &
          0.12d2* &
@@ -156,7 +178,7 @@ contains
          0.3d1*E(2)**2*h(2)**4 &
          )
 
-      compute_C(1, 2) = &
+      C(1, 2) = &
          -0.1d1* &
          q(2)* &
          ( &
@@ -184,7 +206,7 @@ contains
          0.2d1*E(2)**2*h(2)**4 &
          )
 
-      compute_C(1, 3) = &
+      C(1, 3) = &
          q(2)* &
          E(1)* &
          (h(3)*(h(1) + 0.2d1*h(2) + h(3))*E(3) + E(2)*h(2)*(h(1) + h(2)))* &
@@ -206,7 +228,7 @@ contains
          E(2)**2*h(2)**4 &
          )
 
-      compute_C(1, 4) = &
+      C(1, 4) = &
          -0.3d1* &
          q(2)* &
          ( &
@@ -249,7 +271,7 @@ contains
          0.6d1*E(2)**2*h(2)**4 &
          )
 
-      compute_C(1, 5) = &
+      C(1, 5) = &
          -0.1d1*E(1)*q(1)*(E(1)*h(1) + E(2)*h(2) + E(3)*h(3))/( &
          E(1)**2*h(1)**4 + &
          0.4d1* &
@@ -271,7 +293,7 @@ contains
          E(2)**2*h(2)**4 &
          )
 
-      compute_C(1, 6) = &
+      C(1, 6) = &
          -0.3d1* &
          q(1)* &
          ( &
@@ -299,7 +321,7 @@ contains
          0.2d1*E(2)**2*h(2)**4 &
          )
 
-      compute_C(1, 7) = &
+      C(1, 7) = &
          0.3d1* &
          q(1)* &
          E(1)* &
@@ -322,7 +344,7 @@ contains
          E(2)**2*h(2)**4 &
          )
 
-      compute_C(1, 8) = &
+      C(1, 8) = &
          -0.3d1* &
          q(1)* &
          ( &
@@ -365,7 +387,7 @@ contains
          0.2d1*E(2)**2*h(2)**4 &
          )
 
-      compute_C(1, 9) = &
+      C(1, 9) = &
          0.2d1* &
          ( &
          ( &
@@ -740,7 +762,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2
 
-      compute_C(1, 10) = &
+      C(1, 10) = &
          0.1d0*( &
          0.3d2*h(1)**6*E(2)*(0.33333333333333333d-1*q(2)*h(1)**2 + QQ)*E(1)**4 + &
          0.12d3* &
@@ -1163,7 +1185,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2
 
-      compute_C(1, 11) = &
+      C(1, 11) = &
          -0.6d1* &
          ( &
          h(1)**4* &
@@ -1543,7 +1565,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2
 
-      compute_C(1, 13) = &
+      C(1, 13) = &
          0.2d1* &
          ( &
          ( &
@@ -1916,7 +1938,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2
 
-      compute_C(1, 14) = &
+      C(1, 14) = &
          0.1d0*( &
          0.3d2*h(1)**6*E(2)*(0.33333333333333333d-1*q(1)*h(1)**2 + M)*E(1)**4 + &
          0.12d3* &
@@ -2339,7 +2361,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2
 
-      compute_C(1, 17) = &
+      C(1, 17) = &
          0.1d0*( &
          0.5d1*q(2)*E(2)**4*h(2)**9 + &
          0.1d2* &
@@ -3802,7 +3824,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2
 
-      compute_C(1, 18) = &
+      C(1, 18) = &
          0.1d0*( &
          0.5d1*E(2)**4*h(2)**9*q(1) + &
          0.1d2* &
@@ -5313,7 +5335,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2
 
-      compute_C(1, 19) = &
+      C(1, 19) = &
          0.5d-1*( &
          0.12d3* &
          ( &
@@ -7055,7 +7077,7 @@ contains
          E(1)**2*h(1)**4 &
          )**2
 
-      compute_C(2, 1) = &
+      C(2, 1) = &
          -0.1d1*q(2)*(E(1)*h(1) + E(2)*h(2) + E(3)*h(3))*E(2)/( &
          0.3d1*E(1)**2*h(1)**4 + &
          0.12d2* &
@@ -7077,7 +7099,7 @@ contains
          0.3d1*E(2)**2*h(2)**4 &
          )
 
-      compute_C(2, 2) = &
+      C(2, 2) = &
          -0.1d1* &
          q(2)* &
          ( &
@@ -7102,7 +7124,7 @@ contains
          0.2d1*E(2)**2*h(2)**4 &
          )
 
-      compute_C(2, 3) = &
+      C(2, 3) = &
          q(2)* &
          E(1)* &
          (h(3)*(h(1) + 0.2d1*h(2) + h(3))*E(3) + E(2)*h(2)*(h(1) + h(2)))* &
@@ -7124,7 +7146,7 @@ contains
          E(2)**2*h(2)**4 &
          )
 
-      compute_C(2, 4) = &
+      C(2, 4) = &
          -0.3d1* &
          q(2)* &
          ( &
@@ -7167,7 +7189,7 @@ contains
          0.6d1*E(2)**2*h(2)**4 &
          )
 
-      compute_C(2, 5) = &
+      C(2, 5) = &
          -0.1d1*q(1)*(E(1)*h(1) + E(2)*h(2) + E(3)*h(3))*E(2)/( &
          E(1)**2*h(1)**4 + &
          0.4d1* &
@@ -7189,7 +7211,7 @@ contains
          E(2)**2*h(2)**4 &
          )
 
-      compute_C(2, 6) = &
+      C(2, 6) = &
          -0.3d1* &
          q(1)* &
          ( &
@@ -7214,7 +7236,7 @@ contains
          0.2d1*E(2)**2*h(2)**4 &
          )
 
-      compute_C(2, 7) = &
+      C(2, 7) = &
          0.3d1* &
          q(1)* &
          E(1)* &
@@ -7237,7 +7259,7 @@ contains
          E(2)**2*h(2)**4 &
          )
 
-      compute_C(2, 8) = &
+      C(2, 8) = &
          -0.3d1* &
          q(1)* &
          ( &
@@ -7280,7 +7302,7 @@ contains
          0.2d1*E(2)**2*h(2)**4 &
          )
 
-      compute_C(2, 9) = &
+      C(2, 9) = &
          0.2d0*( &
          0.2d1*E(1)**3*E(2)*h(1)**7*q(2) - &
          0.5d1* &
@@ -7670,7 +7692,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2
 
-      compute_C(2, 10) = &
+      C(2, 10) = &
          0.1d0*( &
          -0.5d1*E(3)**4*h(3)**8*nu(2)*q(2) - &
          0.6d2* &
@@ -8129,7 +8151,7 @@ contains
          E(1)**2*h(1)**4 &
          )**2
 
-      compute_C(2, 11) = &
+      C(2, 11) = &
          -0.6d1* &
          ( &
          h(1)**4* &
@@ -8509,7 +8531,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2
 
-      compute_C(2, 13) = &
+      C(2, 13) = &
          0.2d0*( &
          0.2d1*E(1)**3*E(2)*h(1)**7*q(1) - &
          0.5d1* &
@@ -8896,7 +8918,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2
 
-      compute_C(2, 14) = &
+      C(2, 14) = &
          0.1d0*( &
          -0.5d1*E(3)**4*h(3)**8*nu(2)*q(1) - &
          0.6d2* &
@@ -9355,7 +9377,7 @@ contains
          E(1)**2*h(1)**4 &
          )**2
 
-      compute_C(2, 17) = &
+      C(2, 17) = &
          0.1d0*( &
          0.5d1*q(2)*E(2)**4*h(2)**9 + &
          0.1d2* &
@@ -10818,7 +10840,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2
 
-      compute_C(2, 18) = &
+      C(2, 18) = &
          0.1d0*( &
          0.5d1*E(2)**4*h(2)**9*q(1) + &
          0.1d2* &
@@ -12329,7 +12351,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2
 
-      compute_C(2, 19) = &
+      C(2, 19) = &
          0.5d-1*( &
          0.12d3* &
          ( &
@@ -14071,7 +14093,7 @@ contains
          E(1)**2*h(1)**4 &
          )**2
 
-      compute_C(3, 1) = &
+      C(3, 1) = &
          -0.1d1*E(3)*q(2)*(E(1)*h(1) + E(2)*h(2) + E(3)*h(3))/( &
          0.3d1*E(3)**2*h(3)**4 + &
          0.12d2* &
@@ -14093,7 +14115,7 @@ contains
          0.3d1*E(2)**2*h(2)**4 &
          )
 
-      compute_C(3, 2) = &
+      C(3, 2) = &
          -0.1d1* &
          q(2)* &
          E(3)* &
@@ -14116,7 +14138,7 @@ contains
          0.2d1*E(2)**2*h(2)**4 &
          )
 
-      compute_C(3, 3) = &
+      C(3, 3) = &
          (((E(2) - 0.1d1*E(3))*h(3) + E(1)*h(1))*h(2) + E(1)*h(1)*(h(1) + h(3)))* &
          q(2)* &
          E(3)* &
@@ -14141,7 +14163,7 @@ contains
          E(3)**2*h(3)**4 &
          )
 
-      compute_C(3, 4) = &
+      C(3, 4) = &
          -0.3d1* &
          q(2)* &
          E(3)* &
@@ -14176,7 +14198,7 @@ contains
          0.6d1*E(3)**2*h(3)**4 &
          )
 
-      compute_C(3, 5) = &
+      C(3, 5) = &
          -0.1d1*E(3)*q(1)*(E(1)*h(1) + E(2)*h(2) + E(3)*h(3))/( &
          E(3)**2*h(3)**4 + &
          0.4d1* &
@@ -14198,7 +14220,7 @@ contains
          E(2)**2*h(2)**4 &
          )
 
-      compute_C(3, 6) = &
+      C(3, 6) = &
          -0.3d1* &
          q(1)* &
          E(3)* &
@@ -14221,7 +14243,7 @@ contains
          0.2d1*E(2)**2*h(2)**4 &
          )
 
-      compute_C(3, 7) = &
+      C(3, 7) = &
          0.3d1* &
          (((E(2) - 0.1d1*E(3))*h(3) + E(1)*h(1))*h(2) + E(1)*h(1)*(h(1) + h(3)))* &
          q(1)* &
@@ -14247,7 +14269,7 @@ contains
          E(3)**2*h(3)**4 &
          )
 
-      compute_C(3, 8) = &
+      C(3, 8) = &
          -0.3d1* &
          q(1)* &
          E(3)* &
@@ -14282,7 +14304,7 @@ contains
          0.2d1*E(3)**2*h(3)**4 &
          )
 
-      compute_C(3, 9) = &
+      C(3, 9) = &
          0.2d1* &
          ( &
          ( &
@@ -14721,7 +14743,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2/E(2)
 
-      compute_C(3, 10) = &
+      C(3, 10) = &
          0.3d1* &
          ( &
          -0.1d1* &
@@ -15357,7 +15379,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2/E(2)
 
-      compute_C(3, 11) = &
+      C(3, 11) = &
          -0.6d1* &
          (h(2) + h(3))* &
          ( &
@@ -16068,7 +16090,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2/E(2)
 
-      compute_C(3, 13) = &
+      C(3, 13) = &
          0.2d1* &
          ( &
          ( &
@@ -16507,7 +16529,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2/E(2)
 
-      compute_C(3, 14) = &
+      C(3, 14) = &
          0.3d1* &
          ( &
          -0.1d1* &
@@ -17141,7 +17163,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2/E(2)
 
-      compute_C(3, 17) = &
+      C(3, 17) = &
          0.1d0*( &
          0.12d3* &
          h(2)**5* &
@@ -18652,7 +18674,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2
 
-      compute_C(3, 18) = &
+      C(3, 18) = &
          0.1d0*( &
          -0.6d2* &
          ( &
@@ -20205,7 +20227,7 @@ contains
          E(3)**2*h(3)**4 &
          )**2
 
-      compute_C(3, 19) = &
+      C(3, 19) = &
          0.5d-1*( &
          0.3d1*q(2)*E(2)**4*h(2)**10 + &
          0.2d2* &
@@ -22547,6 +22569,6 @@ contains
          E(3)**2*h(3)**4 &
          )**2
 
-   end function compute_C
+   end function computeC
 
 end module sandwich_solution
