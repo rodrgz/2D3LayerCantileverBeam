@@ -31,7 +31,7 @@ program example
    ! Compute the C matrix
    C = computeC(E, nu, l, h, Q, M, p)
 
-   print *, "(x, y) = ", "(", x, ",", y, ")"
+   print *, "(x, y) = (", x, ", ", y, ")"
    print *, "layer = ", i
    print *, "u_{1} = ", u1(C, x, y, i, E, nu)
    print *, "u_{2} = ", u2(C, x, y, i, E, nu)
