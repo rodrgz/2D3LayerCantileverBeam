@@ -1,8 +1,7 @@
-include("SandwichSolution.jl")  # Include the module file
+include("SandwichSolution.jl")
 
 using .SandwichSolution
 
-# Benchmark parameters
 E₁ = E₃ = 500.0
 ν₁ = ν₃ = 0.3
 E₂ = 100.0

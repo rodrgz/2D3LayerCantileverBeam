@@ -22,7 +22,6 @@
 #   journal = {To appear in Composite Structures}
 # }
 
-
 module SandwichSolution
 
 export u₁, u₂, σ₁₁, σ₂₂, σ₁₂
