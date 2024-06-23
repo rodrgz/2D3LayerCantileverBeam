@@ -48,7 +48,7 @@ export u₁, u₂, σ₁₁, σ₂₂, σ₁₂
 #                            |-------------l---------------|
 
 function u₁(x, y, i, E, nu, l, h, Q, M, p)
-    C = compute_constants(i, E, nu, l, h, Q, M, p)
+    C = computeC(i, E, nu, l, h, Q, M, p)
     return (
         (18 * C[1] * nu[i] + 27 * C[1]) * y^5 +
         (30 * C[2] * nu[i] + 45 * C[2]) * y^4 +
@@ -76,7 +76,7 @@ function u₁(x, y, i, E, nu, l, h, Q, M, p)
 end
 
 function u₂(x, y, i, E, nu, l, h, Q, M, p)
-    C = compute_constants(i, E, nu, l, h, Q, M, p)
+    C = computeC(i, E, nu, l, h, Q, M, p)
     return (
         -9 * x^5 * C[1] - 15 * x^4 * C[5] +
         (
@@ -103,7 +103,7 @@ function u₂(x, y, i, E, nu, l, h, Q, M, p)
 end
 
 function σ₁₁(x, y, i, E, nu, l, h, Q, M, p)
-    C = compute_constants(i, E, nu, l, h, Q, M, p)
+    C = computeC(i, E, nu, l, h, Q, M, p)
     return x^3 * (6 * y * C[1] + 2 * C[2]) +
            x^2 * (6 * y * C[5] + 2 * C[6]) +
            x * (-12 * C[1] * y^3 - 12 * C[2] * y^2 + 6 * y * C[9] + 2 * C[10]) -
@@ -113,7 +113,7 @@ function σ₁₁(x, y, i, E, nu, l, h, Q, M, p)
 end
 
 function σ₂₂(x, y, i, E, nu, l, h, Q, M, p)
-    C = compute_constants(i, E, nu, l, h, Q, M, p)
+    C = computeC(i, E, nu, l, h, Q, M, p)
     return 6 * x * (C[1] * y^3 + C[2] * y^2 + C[3] * y + C[4]) +
            2 * C[5] * y^3 +
            2 * C[6] * y^2 +
@@ -122,7 +122,7 @@ function σ₂₂(x, y, i, E, nu, l, h, Q, M, p)
 end
 
 function σ₁₂(x, y, i, E, nu, l, h, Q, M, p)
-    C = compute_constants(i, E, nu, l, h, Q, M, p)
+    C = computeC(i, E, nu, l, h, Q, M, p)
     return -3 * x^2 * (3 * y^2 * C[1] + 2 * y * C[2] + C[3]) -
            2 * x * (3 * y^2 * C[5] + 2 * C[6] * y + C[7]) +
            3 * C[1] * y^4 +
@@ -16259,7 +16259,7 @@ C = [
     C_3_1 C_3_2 C_3_3 C_3_4 C_3_5 C_3_6 C_3_7 C_3_8 C_3_9 C_3_10 C_3_11 C_3_12 C_3_13 C_3_14 C_3_14 C_3_15 C_3_17 C_3_18 C_3_19
 ]
 
-function compute_constants(layer, E, nu, l, h, Q, M, p)
+function computeC(layer, E, nu, l, h, Q, M, p)
     result = zeros(Float64, 19)
 
     for i = 1:19
