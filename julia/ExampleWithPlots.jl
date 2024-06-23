@@ -112,7 +112,6 @@ y_outer = [
 ]
 u₁_outer = similar(x_outer)
 u₂_outer = similar(y_outer)
-#erro aqui
 calculate_displacements!(u₁_outer, u₂_outer, X, Y, x_outer, y_outer, E, ν, l, h, Q, M, p)
 
 x_inner = [x_grid; reverse(x_grid)]
