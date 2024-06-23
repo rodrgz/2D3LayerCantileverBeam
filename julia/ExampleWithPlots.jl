@@ -2,8 +2,8 @@ include("SandwichSolution.jl")
 
 using .SandwichSolution
 using Plots
+using Plots.PlotMeasures
 
-# Benchmark parameters
 E₁ = E₃ = 500.0
 ν₁ = ν₃ = 0.3
 E₂ = 100.0
@@ -33,19 +33,7 @@ function calculate_stresses!(σ11, σ22, σ12, X, Y, x_coords, y_coords, E, ν, 
 end
 
 function calculate_displacements!(
-    u1::AbstractVector,
-    u2::AbstractVector,
-    X,
-    Y,
-    x_coords,
-    y_coords,
-    E,
-    ν,
-    l,
-    h,
-    Q,
-    M,
-    p,
+    u1::AbstractVector, u2::AbstractVector, X, Y, x_coords, y_coords, E, ν, l, h, Q, M, p,
 )
     for (i, x) in enumerate(x_coords)
         y = y_coords[i]
@@ -56,19 +44,7 @@ function calculate_displacements!(
 end
 
 function calculate_displacements!(
-    u1::AbstractMatrix,
-    u2::AbstractMatrix,
-    X,
-    Y,
-    x_coords,
-    y_coords,
-    E,
-    ν,
-    l,
-    h,
-    Q,
-    M,
-    p,
+    u1::AbstractMatrix, u2::AbstractMatrix, X, Y, x_coords, y_coords, E, ν, l, h, Q, M, p,
 )
     for (i, x) in enumerate(x_coords)
         for (j, y) in enumerate(y_coords)
@@ -92,6 +68,7 @@ u₂_grid = similar(Y)
 calculate_displacements!(u₁_grid, u₂_grid, X, Y, x_grid, y_grid, E, ν, l, h, Q, M, p)
 calculate_stresses!(σ₁₁_grid, σ₂₂_grid, σ₁₂_grid, X, Y, x_grid, y_grid, E, ν, l, h, Q, M, p)
 
+# Create an external boundary for plotting deformation
 x_outer = [
     x_grid
     x_grid[end]
@@ -114,6 +91,7 @@ u₁_outer = similar(x_outer)
 u₂_outer = similar(y_outer)
 calculate_displacements!(u₁_outer, u₂_outer, X, Y, x_outer, y_outer, E, ν, l, h, Q, M, p)
 
+# Create an inner boundary (material interfaces) for plotting deformation
 x_inner = [x_grid; reverse(x_grid)]
 y_inner = [0.0 .* ones(length(x_grid)); h₂ .* ones(length(x_grid))]
 u₁_inner = similar(x_inner)
@@ -121,21 +99,10 @@ u₂_inner = similar(y_inner)
 calculate_displacements!(u₁_inner, u₂_inner, X, Y, x_inner, y_inner, E, ν, l, h, Q, M, p)
 
 function plot_and_save_contour(
-    x_grid,
-    y_grid,
-    data_grid,
-    filename,
-    xlabel,
-    ylabel,
-    title,
-    clims,
-    num_contours,
-    h,
-    l,
+    x_grid, y_grid, data_grid, filename, xlabel, ylabel, title, clims, num_contours, h, l,
 )
     contourf(
-        x_grid,
-        y_grid,
+        x_grid, y_grid,
         data_grid';
         xlabel = xlabel,
         ylabel = ylabel,
@@ -145,13 +112,15 @@ function plot_and_save_contour(
         clims = clims,
         levels = num_contours,
         yflip = true,
+        left_margin = 8mm,
+        right_margin = 2mm,
     )
 
-    # Plot horizontal line at y=h[2]
+    # Plot material interface at y=h[2]
     h_line_y = h[2]
     plot!([0, l], [h_line_y, h_line_y]; linecolor = :magenta, label = "")
 
-    # Plot horizontal line at y=h[1]
+    # Plot material interface at y=h[1]
     h_line_y = 0
     plot!([0, l], [h_line_y, h_line_y]; linecolor = :magenta, label = "")
 
@@ -164,69 +133,24 @@ ylabel = "y"
 
 # Plot and save each contour plot
 plot_and_save_contour(
-    x_grid,
-    y_grid,
-    u₁_grid,
-    "u1.svg",
-    xlabel,
-    ylabel,
-    "u₁",
-    (-maximum(abs.(u₁_grid)), maximum(abs.(u₁_grid))),
-    num_contours,
-    h,
-    l,
+    x_grid, y_grid, u₁_grid, "u1.svg", xlabel, ylabel, "u₁", 
+    (-maximum(abs.(u₁_grid)), maximum(abs.(u₁_grid))), num_contours, h, l,
 )
 plot_and_save_contour(
-    x_grid,
-    y_grid,
-    u₂_grid,
-    "u2.svg",
-    xlabel,
-    ylabel,
-    "u₂",
-    (-maximum(abs.(u₂_grid)), maximum(abs.(u₂_grid))),
-    num_contours,
-    h,
-    l,
+    x_grid, y_grid, u₂_grid, "u2.svg", xlabel, ylabel, "u₂",
+    (-maximum(abs.(u₂_grid)), maximum(abs.(u₂_grid))), num_contours, h, l,
 )
 plot_and_save_contour(
-    x_grid,
-    y_grid,
-    σ₁₁_grid,
-    "sigma11.svg",
-    xlabel,
-    ylabel,
-    "σ₁₁",
-    (-maximum(abs.(σ₁₁_grid)), maximum(abs.(σ₁₁_grid))),
-    num_contours,
-    h,
-    l,
+    x_grid, y_grid, σ₁₁_grid, "sigma11.svg", xlabel, ylabel, "σ₁₁",
+    (-maximum(abs.(σ₁₁_grid)), maximum(abs.(σ₁₁_grid))), num_contours, h, l,
 )
 plot_and_save_contour(
-    x_grid,
-    y_grid,
-    σ₂₂_grid,
-    "sigma22.svg",
-    xlabel,
-    ylabel,
-    "σ₂₂",
-    (-maximum(abs.(σ₂₂_grid)), maximum(abs.(σ₂₂_grid))),
-    num_contours,
-    h,
-    l,
+    x_grid, y_grid, σ₂₂_grid, "sigma22.svg", xlabel, ylabel, "σ₂₂",
+    (-maximum(abs.(σ₂₂_grid)), maximum(abs.(σ₂₂_grid))), num_contours, h, l,
 )
 plot_and_save_contour(
-    x_grid,
-    y_grid,
-    σ₁₂_grid,
-    "sigma12.svg",
-    xlabel,
-    ylabel,
-    "σ₁₂",
-    (-maximum(abs.(σ₁₂_grid)), maximum(abs.(σ₁₂_grid))),
-    num_contours,
-    h,
-    l,
+    x_grid, y_grid, σ₁₂_grid, "sigma12.svg", xlabel, ylabel, "σ₁₂",
+    (-maximum(abs.(σ₁₂_grid)), maximum(abs.(σ₁₂_grid))), num_contours, h, l,
 )
 
 # Function to plot boundary
@@ -250,8 +174,7 @@ u₂_inner *= scale
 
 # Plot deformed and undeformed beams
 plot(
-    x_outer,
-    y_outer;
+    x_outer, y_outer;
     linecolor = :black,
     yflip = true,
     aspect_ratio = :equal,
