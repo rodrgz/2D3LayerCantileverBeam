@@ -8,8 +8,8 @@ E₁ = E₃ = 500.0
 ν₁ = ν₃ = 0.3
 E₂ = 100.0
 ν₂ = 0.25
-Q = -1.0e-2  #positivo deflexao pra cima
-M = -5.0e-2 # positivo deflexao pra cima pra cima
+Q = -1.0e-2
+M = -5.0e-2
 p₁ = 3.0
 p₂ = 2.0 / 5.0
 l = 5.0
@@ -21,167 +21,253 @@ E = [E₁, E₂, E₃]
 h = [h₁, h₂, h₃]
 p = [p₁, p₂]
 
-# Compute C matrix
-C = computeC(E, ν, l, h, Q, M, p)
+function calculate_stresses!(σ11, σ22, σ12, X, Y, x_coords, y_coords, E, ν, l, h, Q, M, p)
+    for (i, x) in enumerate(x_coords)
+        for (j, y) in enumerate(y_coords)
+            α = ifelse(y < 0.0, 1, y > h[2] ? 3 : 2)
+            σ11[i, j] = σ₁₁(x, y, α, E, ν, l, h, Q, M, p)
+            σ22[i, j] = σ₂₂(x, y, α, E, ν, l, h, Q, M, p)
+            σ12[i, j] = σ₁₂(x, y, α, E, ν, l, h, Q, M, p)
+        end
+    end
+end
+
+function calculate_displacements!(
+    u1::AbstractVector,
+    u2::AbstractVector,
+    X,
+    Y,
+    x_coords,
+    y_coords,
+    E,
+    ν,
+    l,
+    h,
+    Q,
+    M,
+    p,
+)
+    for (i, x) in enumerate(x_coords)
+        y = y_coords[i]
+        α = ifelse(y < 0.0, 1, y > h[2] ? 3 : 2)
+        u1[i] = u₁(x, y, α, E, ν, l, h, Q, M, p)
+        u2[i] = u₂(x, y, α, E, ν, l, h, Q, M, p)
+    end
+end
+
+function calculate_displacements!(
+    u1::AbstractMatrix,
+    u2::AbstractMatrix,
+    X,
+    Y,
+    x_coords,
+    y_coords,
+    E,
+    ν,
+    l,
+    h,
+    Q,
+    M,
+    p,
+)
+    for (i, x) in enumerate(x_coords)
+        for (j, y) in enumerate(y_coords)
+            α = ifelse(y < 0.0, 1, y > h[2] ? 3 : 2)
+            u1[i, j] = u₁(x, y, α, E, ν, l, h, Q, M, p)
+            u2[i, j] = u₂(x, y, α, E, ν, l, h, Q, M, p)
+        end
+    end
+end
 
 # Create a grid of x and y values
-x_grid = range(0, l, length = 100)
-y_grid = range(-h₁, h₂ + h₃, length = 20)
+x_grid = range(0, l; length = 100)
+y_grid = range(-h₁, h₂ + h₃; length = 20)
 X = repeat(x_grid, 1, length(y_grid))
 Y = repeat(y_grid, 1, length(x_grid))'
-
-# Extract outer boundary points
-x_outer = [x_grid; reverse(x_grid); x_grid[1]]
-y_outer = [-h₁ .* ones(length(x_grid)); (h₂ + h₃) .* ones(length(x_grid)); -h₁]
-
-# Initialize arrays to store stress and displacement values
 u₁_grid = similar(X)
 u₂_grid = similar(Y)
 σ₁₁_grid = similar(X)
 σ₂₂_grid = similar(X)
 σ₁₂_grid = similar(X)
+calculate_displacements!(u₁_grid, u₂_grid, X, Y, x_grid, y_grid, E, ν, l, h, Q, M, p)
+calculate_stresses!(σ₁₁_grid, σ₂₂_grid, σ₁₂_grid, X, Y, x_grid, y_grid, E, ν, l, h, Q, M, p)
+
+x_outer = [
+    x_grid
+    x_grid[end]
+    x_grid[end]
+    reverse(x_grid)
+    x_grid[1]
+    x_grid[1]
+    x_grid[1]
+]
+y_outer = [
+    -h₁ .* ones(length(x_grid))
+    0.0
+    h₂
+    (h₂ + h₃) .* ones(length(x_grid))
+    h₂
+    0.0
+    -h₁
+]
 u₁_outer = similar(x_outer)
 u₂_outer = similar(y_outer)
-σ₁₁_outer = similar(x_outer)
-σ₂₂_outer = similar(y_outer)
-σ₁₂_outer = similar(x_outer)
+#erro aqui
+calculate_displacements!(u₁_outer, u₂_outer, X, Y, x_outer, y_outer, E, ν, l, h, Q, M, p)
 
-# Calculate stress and displacement values for each point in the grid
-for i = 1:length(x_grid)
-    for j = 1:length(y_grid)
-        x = X[i, j]
-        y = Y[i, j]
+x_inner = [x_grid; reverse(x_grid)]
+y_inner = [0.0 .* ones(length(x_grid)); h₂ .* ones(length(x_grid))]
+u₁_inner = similar(x_inner)
+u₂_inner = similar(y_inner)
+calculate_displacements!(u₁_inner, u₂_inner, X, Y, x_inner, y_inner, E, ν, l, h, Q, M, p)
 
-        # Determine the appropriate layer α based on y
-        α = ifelse(y < 0, 1, y > h₂ ? 3 : 2)
+function plot_and_save_contour(
+    x_grid,
+    y_grid,
+    data_grid,
+    filename,
+    xlabel,
+    ylabel,
+    title,
+    clims,
+    num_contours,
+    h,
+    l,
+)
+    contourf(
+        x_grid,
+        y_grid,
+        data_grid';
+        xlabel = xlabel,
+        ylabel = ylabel,
+        title = title,
+        aspect_ratio = :equal,
+        color = :turbo,
+        clims = clims,
+        levels = num_contours,
+        yflip = true,
+    )
 
-        # Calculate displacements and stresses at this point
-        u₁_grid[i, j] = u₁(C, x, y, α, E, ν)
-        u₂_grid[i, j] = u₂(C, x, y, α, E, ν)
-        σ₁₁_grid[i, j] = σ₁₁(C, x, y, α)
-        σ₂₂_grid[i, j] = σ₂₂(C, x, y, α)
-        σ₁₂_grid[i, j] = σ₁₂(C, x, y, α)
+    # Plot horizontal line at y=h[2]
+    h_line_y = h[2]
+    plot!([0, l], [h_line_y, h_line_y]; linecolor = :magenta, label = "")
 
-    end
+    # Plot horizontal line at y=h[1]
+    h_line_y = 0
+    plot!([0, l], [h_line_y, h_line_y]; linecolor = :magenta, label = "")
+
+    return savefig(filename)
 end
-
-for i = 1:length(x_outer)
-    x = x_outer[i]
-    y = y_outer[i]
-
-    # Determine the appropriate layer α i based on y
-    α = ifelse(y < 0, 1, y > h₂ ? 3 : 2)
-
-    # Calculate displacements and stresses at this point
-    u₁_outer[i] = u₁(C, x, y, α, E, ν)
-    u₂_outer[i] = u₂(C, x, y, α, E, ν)
-    σ₁₁_outer[i] = σ₁₁(C, x, y, α)
-    σ₂₂_outer[i] = σ₂₂(C, x, y, α)
-    σ₁₂_outer[i] = σ₁₂(C, x, y, α)
-end
-
 
 num_contours = 20
+xlabel = "x"
+ylabel = "y"
 
-# Plotting and saving in svg format
-contourf(
+# Plot and save each contour plot
+plot_and_save_contour(
     x_grid,
     y_grid,
-    u₁_grid',
-    xlabel = "x",
-    ylabel = "y",
-    title = "u₁",
-    aspect_ratio = :equal,
-    color = :turbo,
-    clims = (-maximum(abs.(u₁_grid)), maximum(abs.(u₁_grid))),
-    levels = num_contours,
-    yflip = true,
+    u₁_grid,
+    "u1.svg",
+    xlabel,
+    ylabel,
+    "u₁",
+    (-maximum(abs.(u₁_grid)), maximum(abs.(u₁_grid))),
+    num_contours,
+    h,
+    l,
 )
-savefig("u1.svg")
-
-contourf(
+plot_and_save_contour(
     x_grid,
     y_grid,
-    u₂_grid',
-    xlabel = "x",
-    ylabel = "y",
-    title = "u₂",
-    aspect_ratio = :equal,
-    color = :turbo,
-    clims = (-maximum(abs.(u₂_grid)), maximum(abs.(u₂_grid))),
-    levels = num_contours,
-    yflip = true,
+    u₂_grid,
+    "u2.svg",
+    xlabel,
+    ylabel,
+    "u₂",
+    (-maximum(abs.(u₂_grid)), maximum(abs.(u₂_grid))),
+    num_contours,
+    h,
+    l,
 )
-savefig("u2.svg")
-
-contourf(
+plot_and_save_contour(
     x_grid,
     y_grid,
-    σ₁₁_grid',
-    xlabel = "x",
-    ylabel = "y",
-    title = "σ₁₁",
-    aspect_ratio = :equal,
-    color = :turbo,
-    clims = (-maximum(abs.(σ₁₁_grid)), maximum(abs.(σ₁₁_grid))),
-    levels = num_contours,
-    yflip = true,
+    σ₁₁_grid,
+    "sigma11.svg",
+    xlabel,
+    ylabel,
+    "σ₁₁",
+    (-maximum(abs.(σ₁₁_grid)), maximum(abs.(σ₁₁_grid))),
+    num_contours,
+    h,
+    l,
 )
-savefig("sigma11.svg")
-
-contourf(
+plot_and_save_contour(
     x_grid,
     y_grid,
-    σ₂₂_grid',
-    xlabel = "x",
-    ylabel = "y",
-    title = "σ₂₂",
-    aspect_ratio = :equal,
-    color = :turbo,
-    clims = (-maximum(abs.(σ₂₂_grid)), maximum(abs.(σ₂₂_grid))),
-    levels = num_contours,
-    yflip = true,
+    σ₂₂_grid,
+    "sigma22.svg",
+    xlabel,
+    ylabel,
+    "σ₂₂",
+    (-maximum(abs.(σ₂₂_grid)), maximum(abs.(σ₂₂_grid))),
+    num_contours,
+    h,
+    l,
 )
-savefig("sigma22.svg")
-
-contourf(
+plot_and_save_contour(
     x_grid,
     y_grid,
-    σ₁₂_grid',
-    xlabel = "x",
-    ylabel = "y",
-    title = "σ₁₂",
-    aspect_ratio = :equal,
-    color = :turbo,
-    clims = (-maximum(abs.(σ₁₂_grid)), maximum(abs.(σ₁₂_grid))),
-    levels = num_contours,
-    yflip = true,
+    σ₁₂_grid,
+    "sigma12.svg",
+    xlabel,
+    ylabel,
+    "σ₁₂",
+    (-maximum(abs.(σ₁₂_grid)), maximum(abs.(σ₁₂_grid))),
+    num_contours,
+    h,
+    l,
 )
-savefig("sigma12.svg")
+
+# Function to plot boundary
+function plot_boundary(x, y, u₁, u₂; label = "", linecolor = :black)
+    return plot!(
+        x .+ u₁,
+        y .+ u₂;
+        linecolor = linecolor,
+        yflip = true,
+        aspect_ratio = :equal,
+        label = label,
+    )
+end
 
 # Create a deformed grid by adding displacements to original coordinates
 scale = 0.1
 u₁_outer *= scale
 u₂_outer *= scale
+u₁_inner *= scale
+u₂_inner *= scale
 
 # Plot deformed and undeformed beams
 plot(
     x_outer,
-    y_outer,
+    y_outer;
     linecolor = :black,
     yflip = true,
     aspect_ratio = :equal,
     label = "Undeformed Boundary",
 )
-plot!(
-    x_outer .+ u₁_outer,
-    y_outer .+ u₂_outer,
-    linecolor = :red,
-    yflip = true,
-    aspect_ratio = :equal,
+plot_boundary(x_inner, y_inner, u₁_inner, u₂_inner; label = "")
+plot_boundary(
+    x_outer,
+    y_outer,
+    u₁_outer,
+    u₂_outer;
     label = "Deformed Boundary",
+    linecolor = :red,
 )
-xlabel!("x")
-ylabel!("y")
-
+plot_boundary(x_inner, y_inner, u₁_inner, u₂_inner; linecolor = :red)
+xlabel!(xlabel)
+ylabel!(ylabel)
 savefig("deformed.svg")
