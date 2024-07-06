@@ -19,7 +19,7 @@
 !   author = {Erik da Rosa Rodriguez and Rodrigo Rossi},
 !   title = {2D Analytical Solution and XFEM Verification of a
 !   Three-Layer Sandwich Beam Under Various Loads},
-!   journal = {To appear in Composite Structures}
+!   journal = {To appear in ...}
 ! }
 
 module sandwich_solution
@@ -144,10 +144,10 @@ contains
       real(dp), intent(in) :: C(3, 19), x, y
       integer, intent(in) :: i
       stress12 = &
-         -0.3d1*x**2*(0.3d1*y**2*C(i, 1) + 0.2d1*y*C(i, 2) + C(i, 3)) - &
+         -(-0.3d1*x**2*(0.3d1*y**2*C(i, 1) + 0.2d1*y*C(i, 2) + C(i, 3)) - &
          0.2d1*x*(0.3d1*y**2*C(i, 5) + 0.2d1*C(i, 6)*y + C(i, 7)) + &
          0.3d1*C(i, 1)*y**4 + &
-         0.4d1*C(i, 2)*y**3 - 0.3d1*C(i, 9)*y**2 - 0.2d1*C(i, 10)*y - 0.1d1*C(i, 11)
+         0.4d1*C(i, 2)*y**3 - 0.3d1*C(i, 9)*y**2 - 0.2d1*C(i, 10)*y - 0.1d1*C(i, 11))
    end function stress12
 
    pure function computeC(E, nu, l, h, Q, M, p) result(C)

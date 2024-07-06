@@ -19,7 +19,7 @@
 #   author = {Erik da Rosa Rodriguez and Rodrigo Rossi},
 #   title = {2D Analytical Solution and XFEM Verification of a
 #   Three-Layer Sandwich Beam Under Various Loads},
-#   journal = {To appear in Composite Structures}
+#   journal = {To appear in ...}
 # }
 
 module SandwichSolution
@@ -122,10 +122,10 @@ end
 
 function σ₁₂(x, y, i, E, nu, l, h, Q, M, p)
     C = computeC(i, E, nu, l, h, Q, M, p)
-    return -3 * x^2 * (3 * y^2 * C[1] + 2 * y * C[2] + C[3]) -
+    return -( -3 * x^2 * (3 * y^2 * C[1] + 2 * y * C[2] + C[3]) -
            2 * x * (3 * y^2 * C[5] + 2 * C[6] * y + C[7]) +
            3 * C[1] * y^4 +
-           4 * C[2] * y^3 - 3 * C[9] * y^2 - 2 * C[10] * y - C[11]
+           4 * C[2] * y^3 - 3 * C[9] * y^2 - 2 * C[10] * y - C[11])
 end
 
 C_1_1(E, nu, l, h, Q, M, q) =

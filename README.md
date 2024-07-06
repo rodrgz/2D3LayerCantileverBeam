@@ -56,7 +56,7 @@ In order to give credit to the `2D3LayerCantileverBeam` contributors, we simply 
   pages = {##},
   author = {Erik da Rosa Rodriguez and Rodrigo Rossi},
   title = {2D Analytical Solution and XFEM Verification of a Three-Layer Sandwich Beam Under Various Loads},
-  journal = {To appear in Composite Structures}
+  journal = {To appear in ...}
 }
 ```
 
