@@ -25,6 +25,10 @@ To use the FORTRAN version, if you are comfortable with Makefiles and GNU gfortr
 ```bash
 git clone https://github.com/rodrgz/2D3LayerCantileverBeam
 cd 2D3LayerCantileverBeam/fortran
+
+# Make sure gfortran and make are installed
+# On Debian/Ubuntu: sudo apt install gfortran make
+
 make
 ./example
 ```
@@ -36,7 +40,15 @@ To run the example in Julia, execute the following commands:
 ```bash
 git clone https://github.com/rodrgz/2D3LayerCantileverBeam
 cd 2D3LayerCantileverBeam/julia
-julia ExampleWithPlots.jl # or Example.jl which is equal to example.f90
+
+# Install the required Julia package (Plots)
+julia -e 'import Pkg; Pkg.add("Plots")'
+
+# Run the example with plotting
+julia ExampleWithPlots.jl
+
+# Or run the simpler version (equivalent to the Fortran example)
+julia Example.jl
 ```
 
 `ExampleWithPlots.jl` uses the Plots.jl library, so ensure you have this library installed on your system before running the example. Additionally, you can incorporate `SandwichSolution.jl` into your Julia code (see LICENSE for details).
