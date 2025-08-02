@@ -46,17 +46,19 @@ julia ExampleWithPlots.jl # or Example.jl which is equal to example.f90
 In order to give credit to the `2D3LayerCantileverBeam` contributors, we simply ask you to cite the reference below in any publication in which you have made use of the `2D3LayerCantileverBeam` library.
 
 ```
-@article{DaRosaRodriguez_Rossi_2024,
-  doi = {##},
-  url = {https://doi.org/##/##},
-  year = {2024},
-  publisher = {##},
-  volume = {##},
-  number = {##},
-  pages = {##},
-  author = {Erik da Rosa Rodriguez and Rodrigo Rossi},
-  title = {2D Analytical Solution and XFEM Verification of a Three-Layer Sandwich Beam Under Various Loads},
-  journal = {To appear in ...}
+ @article{Rodriguez_Rossi_2025,
+ title={Revisiting the bi-dimensional elastic three-layer beam analytical solution: a novel solution for various loads followed by an XFEM numerical verification},
+ volume={47},
+ ISSN={1678-5878, 1806-3691},
+ url={https://link.springer.com/10.1007/s40430-025-05779-4},
+ DOI={https://doi.org/10.1007/s40430-025-05779-4},
+ number={10},
+ journal={Journal of the Brazilian Society of Mechanical Sciences and Engineering},
+ author={da Rosa Rodriguez, Erik and Rossi, Rodrigo},
+ year={2025},
+ month=oct,
+ pages={466},
+ language={en}
 }
 ```
 
